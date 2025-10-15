@@ -1,0 +1,14 @@
+<p>Tell me how you feel.</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input formControlName="input">
+</form>
+
+@if (resultAmount.hasValue()) {
+    @for (resultIndex of [].constructor(resultAmount.value() ?? 0); track resultIndex) {
+        <app-result-card [resultIndex]="resultIndex"></app-result-card>
+    }
+}
+
+@if (resultAmount.isLoading()) {
+    <p>Loading...</p>
+}
