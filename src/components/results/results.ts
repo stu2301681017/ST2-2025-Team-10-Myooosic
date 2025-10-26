@@ -17,7 +17,7 @@ export class Results {
   protected form = new FormGroup({
     input: new FormControl<string | null>(null)
   })
-  protected query = signal<string | null | undefined>(undefined, { equal: () => false }); // Always allow a new response from server, even with same prompt
+  protected query = signal<string | undefined>(undefined, { equal: () => false }); // Always allow a new response from server, even with same prompt
   protected resultAmount: Loading<number>;
 
   constructor(private resultsService: ResultsService) {
@@ -27,9 +27,9 @@ export class Results {
   }
 
   onSubmit() {
-    const val = this.form.get('input')?.value;
+    const val = this.form.get('input')?.value?.trim();
     if (val && val > '') {
-      this.query.set(this.form.get('input')?.value);
+      this.query.set(val);
     }
     this.form.reset();
   }

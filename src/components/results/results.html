@@ -1,6 +1,6 @@
 <p>Tell me how you feel.</p>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <input formControlName="input">
+    <input formControlName="input" maxlength="256">
 </form>
 
 @if (resultAmount.hasValue()) {
@@ -11,4 +11,8 @@
 
 @if (resultAmount.isLoading()) {
     <p>Loading...</p>
+}
+
+@if (resultAmount.hasError()) {
+    <p>{{resultAmount.error()}}</p>
 }

@@ -5,54 +5,55 @@ import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api/api.service';
 import { ApiRoute } from '../../core/api/api.routes';
 import { map, Observable } from 'rxjs';
-import { Song } from '../../core/Song';
-import { Loading } from '../../core/loading';
+import { loading, Loading } from '../../core/loading';
 
 @Injectable()
 export class ResultsService {
 
     private results = rxResource({
-        params: () => this.prompt(),
-        stream: ({params}) => this.api.post<Suggestion[]>(ApiRoute.SUGGESTIONS, params)
+        params: () => {
+            const prompt = this.prompt();
+            return prompt ? { prompt } : undefined
+        },
+        stream: ({params}) => this.api.get<Suggestion[]>(ApiRoute.SUGGESTIONS, params)
     })
-    private prompt = signal<string | null | undefined>(undefined).asReadonly();
+    private prompt = signal<string | undefined>(undefined).asReadonly();
 
     constructor(
         private api: ApiService
     ) {}
 
-    public followPrompt(prompt: Signal<string | null | undefined>): void {
+    public followPrompt(prompt: Signal<string | undefined>): void {
         this.prompt = prompt;
     }
 
     public getResultsAmount(): Loading<number> {
-        return {
-            value: computed(() => {
+        
+        return loading(
+            computed(() => {
                 if (this.results.hasValue()) {
                     return this.results.value().length;
                 }
                 return undefined;
             }),
-            isLoading: this.results.isLoading,
-            hasValue: computed(() => this.results.hasValue()),
-            error: this.results.error
-        }
+            this.results.error,
+            this.results.isLoading
+        );
     }
 
     public getResultByIndex(index: Signal<number | undefined>): Loading<Suggestion> {
         this.results.status
-        return {
-            value: computed(() => {
+        return loading(
+            computed(() => {
                 if (this.results.hasValue()) {
                     const i = index();
                     return i ? this.results.value()[i] : undefined
                 }
                 return undefined;
             }),
-            isLoading: this.results.isLoading,
-            hasValue: computed(() => this.results.hasValue()),
-            error: this.results.error
-        };
+            signal(undefined),
+            this.results.isLoading
+        );
     }
 
 }

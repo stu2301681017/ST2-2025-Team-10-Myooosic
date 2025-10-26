@@ -1,3 +1,4 @@
 export enum ApiRoute {
-    SUGGESTIONS = "/query"
+    // GET(string): Returns suggestions for songs for the query given in the string. 
+    SUGGESTIONS = "/query/{prompt}"
 }

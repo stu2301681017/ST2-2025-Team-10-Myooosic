@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, map, Observable } from 'rxjs';
 import { ApiRoute } from './api.routes';
-import { Observable, of, switchMap, throwError } from 'rxjs';
 
 export interface ApiResponse<T> {
     data: T,
@@ -15,7 +15,7 @@ export interface ApiResponse<T> {
 })
 export class ApiService {
 
-    private apiBase = '';
+    private apiBase = 'api';
 
     constructor(
         private http: HttpClient
@@ -23,35 +23,26 @@ export class ApiService {
 
     public get<T>(url: ApiRoute, params?: {[key: string]: string}): Observable<T> {
         return this.http.get<ApiResponse<T>>(params ? Object.keys(params).reduce(((p, c) => p.replace('{'+c+'}', params[c])), this.apiBase + url) : this.apiBase + url)
-            .pipe(switchMap(response => {
-                if (response.success) {
-                    return of(response.data);
-                } else {
-                    return throwError(() => new Error('Failed to GET with status ' + response.status + ': ' + response.response));
-                }
-            }))
+            .pipe(map(x => x.data))
+            .pipe(catchError(err => {throw new Error(err.error.response)}))
     }
 
     public post<T>(url: ApiRoute, body: any, params?: {[key: string]: string}): Observable<T> {
         return this.http.post<ApiResponse<T>>(params ? Object.keys(params).reduce(((p, c) => p.replace('{'+c+'}', params[c])), this.apiBase + url) : this.apiBase + url, body)
-            .pipe(switchMap(response => {
-                if (response.success) {
-                    return of(response.data);
-                } else {
-                    return throwError(() => new Error('Failed to POST with status ' + response.status + ': ' + response.response));
-                }
-            }))
+            .pipe(map(x => x.data))
+            .pipe(catchError(err => {throw new Error(err.error.response)}))
     }
 
-    public delete<T>(url: ApiRoute, params?: {[key: string]: string}): Observable<null> {
+    public delete<T>(url: ApiRoute, params?: {[key: string]: string}): Observable<T> {
         return this.http.delete<ApiResponse<T>>(params ? Object.keys(params).reduce(((p, c) => p.replace('{'+c+'}', params[c])), this.apiBase + url) : this.apiBase + url)
-            .pipe(switchMap(response => {
-                if (response.success) {
-                    return of(null);
-                } else {
-                    return throwError(() => new Error('Failed to DELETE with status ' + response.status + ': ' + response.response));
-                }
-            }))
+            .pipe(map(x => x.data))
+            .pipe(catchError(err => {throw new Error(err.error.response)}))
+    }
+    
+    public put<T>(url: ApiRoute, body: any, params?: {[key: string]: string}): Observable<T> {
+        return this.http.put<ApiResponse<T>>(params ? Object.keys(params).reduce(((p, c) => p.replace('{'+c+'}', params[c])), this.apiBase + url) : this.apiBase + url, body)
+            .pipe(map(x => x.data))
+            .pipe(catchError(err => {throw new Error(err.error.response)}))
     }
 
 }
