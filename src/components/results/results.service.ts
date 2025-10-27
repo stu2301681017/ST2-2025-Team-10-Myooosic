@@ -4,55 +4,71 @@ import { Suggestion } from '../../core/Suggestion';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api/api.service';
 import { ApiRoute } from '../../core/api/api.routes';
-import { map, Observable } from 'rxjs';
-import { loading, Loading } from '../../core/loading';
+import { catchError, EMPTY, map, Observable, tap } from 'rxjs';
+import { loading, Loading, LoadingSource, loadingSource } from '../../core/loading';
 
 @Injectable()
 export class ResultsService {
 
-    private results = rxResource({
-        params: () => {
-            const prompt = this.prompt();
-            return prompt ? { prompt } : undefined
-        },
-        stream: ({params}) => this.api.get<Suggestion[]>(ApiRoute.SUGGESTIONS, params)
-    })
-    private prompt = signal<string | undefined>(undefined).asReadonly();
+    private results = signal<LoadingSource<Suggestion>[]>([]);
+    private latestError = signal<Error | undefined>(undefined);
 
     constructor(
         private api: ApiService
-    ) {}
-
-    public followPrompt(prompt: Signal<string | undefined>): void {
-        this.prompt = prompt;
-    }
-
-    public getResultsAmount(): Loading<number> {
+    ) {
         
-        return loading(
-            computed(() => {
-                if (this.results.hasValue()) {
-                    return this.results.value().length;
-                }
-                return undefined;
-            }),
-            this.results.error,
-            this.results.isLoading
-        );
     }
 
-    public getResultByIndex(index: Signal<number | undefined>): Loading<Suggestion> {
-        this.results.status
-        return loading(
-            computed(() => {
-                if (this.results.hasValue()) {
-                    const i = index();
-                    return i ? this.results.value()[i] : undefined
-                }
-                return undefined;
-            }),
-            signal(undefined),
-            this.results.isLoading
+    public suggestNew(prompt: string, amount: number = 1): void {
+        for (let i = 0; i < amount; i++) {
+            let newIndex: number = -1;
+            this.results.update(results => {
+                newIndex = results.push(loadingSource());
+                return results;
+            })
+            this.reSuggest(prompt, newIndex);
+        }
+    }
+
+    public reSuggest(prompt: string, index: number): void {
+        this.api.get<Suggestion>(ApiRoute.SUGGESTION_SINGLE, {prompt})
+            .pipe(tap(suggestion => {
+                this.results.update(results => {
+                    results[index].value = suggestion;
+                    results[index].isLoading = false;
+                    return results;
+                })
+            }))
+            .pipe(catchError(err => {
+                this.results.update(results => {
+                    results[index].error = err
+                    results[index].isLoading = false;
+                    return results;
+                });
+                this.latestError.set(err);
+                return EMPTY;
+            }))
+            .subscribe();
+    }
+
+    public reset(): void {
+        this.results.set([]);
+    }
+
+    public getLatestError(): Signal<Error | undefined> {
+        return this.latestError.asReadonly();
+    }
+
+    public getResultsAmount(): Signal<number> {
+        return computed(() => this.results().length)
+    }
+
+    public getSuggestionByIndex(index: Signal<number | undefined>): Loading<Suggestion> {
+        const vindex = index();
+        return loading(            
+            computed(() => vindex ? this.results()[vindex].value : undefined),
+            computed(() => vindex ? this.results()[vindex].error : undefined),
+            computed(() => vindex ? this.results()[vindex].isLoading : true)
         );
     }
 

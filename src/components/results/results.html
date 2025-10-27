@@ -3,16 +3,10 @@
     <input formControlName="input" maxlength="256">
 </form>
 
-@if (resultAmount.hasValue()) {
-    @for (resultIndex of [].constructor(resultAmount.value() ?? 0); track resultIndex) {
-        <app-result-card [resultIndex]="resultIndex"></app-result-card>
-    }
+@for (resultIndex of [].constructor(resultAmount()); track resultIndex) {
+    <app-result-card [resultIndex]="resultIndex"></app-result-card>
 }
 
-@if (resultAmount.isLoading()) {
-    <p>Loading...</p>
-}
-
-@if (resultAmount.hasError()) {
-    <p>{{resultAmount.error()}}</p>
+@if (latestError()) {
+    <p>{{latestError()}}</p>
 }

@@ -15,7 +15,7 @@ export class ResultCard {
   protected result: Loading<Suggestion>;
   
   constructor(private resultsService: ResultsService) {
-    this.result = this.resultsService.getResultByIndex(this.resultIndex);
+    this.result = this.resultsService.getSuggestionByIndex(this.resultIndex);
   }
 
 }

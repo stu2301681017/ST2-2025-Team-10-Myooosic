@@ -17,19 +17,20 @@ export class Results {
   protected form = new FormGroup({
     input: new FormControl<string | null>(null)
   })
-  protected query = signal<string | undefined>(undefined, { equal: () => false }); // Always allow a new response from server, even with same prompt
-  protected resultAmount: Loading<number>;
+  protected resultAmount: Signal<number>;
+  protected latestError: Signal<Error | undefined>;;
 
   constructor(private resultsService: ResultsService) {
 
-    this.resultsService.followPrompt(this.query);
     this.resultAmount = this.resultsService.getResultsAmount();
+    this.latestError = this.resultsService.getLatestError();
   }
 
   onSubmit() {
+    this.resultsService.reset();
     const val = this.form.get('input')?.value?.trim();
     if (val && val > '') {
-      this.query.set(val);
+      this.resultsService.suggestNew(val, 9);
     }
     this.form.reset();
   }
