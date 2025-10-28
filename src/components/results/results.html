@@ -3,7 +3,7 @@
     <input formControlName="input" maxlength="256">
 </form>
 
-@for (resultIndex of [].constructor(resultAmount()); track resultIndex) {
+@for (resultIndex of indices(); track resultIndex) {
     <app-result-card [resultIndex]="resultIndex"></app-result-card>
 }
 

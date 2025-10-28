@@ -13,6 +13,14 @@ export class ResultCard {
 
   public resultIndex = input<number>();
   protected result: Loading<Suggestion>;
+
+  protected length = computed(() => {
+    let allSeconds = this.result.value()?.song.length ?? 0;
+    let seconds = allSeconds % 60;
+    let minutes = Math.floor(allSeconds / 60);
+    let hours = Math.floor(allSeconds / 3600);
+    return { seconds, minutes, hours};
+  })
   
   constructor(private resultsService: ResultsService) {
     this.result = this.resultsService.getSuggestionByIndex(this.resultIndex);

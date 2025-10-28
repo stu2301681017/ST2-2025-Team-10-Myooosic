@@ -4,13 +4,13 @@ import { Suggestion } from '../../core/Suggestion';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api/api.service';
 import { ApiRoute } from '../../core/api/api.routes';
-import { catchError, EMPTY, map, Observable, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, takeUntil, tap } from 'rxjs';
 import { loading, Loading, LoadingSource, loadingSource } from '../../core/loading';
 
 @Injectable()
 export class ResultsService {
 
-    private results = signal<LoadingSource<Suggestion>[]>([]);
+    private results = signal<LoadingSource<Suggestion>[]>([], { equal: () => false }); // force updates
     private latestError = signal<Error | undefined>(undefined);
 
     constructor(
@@ -21,9 +21,10 @@ export class ResultsService {
 
     public suggestNew(prompt: string, amount: number = 1): void {
         for (let i = 0; i < amount; i++) {
+            
             let newIndex: number = -1;
             this.results.update(results => {
-                newIndex = results.push(loadingSource());
+                newIndex = results.push(loadingSource()) - 1;
                 return results;
             })
             this.reSuggest(prompt, newIndex);
@@ -31,8 +32,13 @@ export class ResultsService {
     }
 
     public reSuggest(prompt: string, index: number): void {
+        let snapshot = this.results()[index];
         this.api.get<Suggestion>(ApiRoute.SUGGESTION_SINGLE, {prompt})
             .pipe(tap(suggestion => {
+                if (this.results()[index] != snapshot) {
+                    // something changed the suggestion, such as a reset. abort
+                    return;
+                }
                 this.results.update(results => {
                     results[index].value = suggestion;
                     results[index].isLoading = false;
@@ -40,6 +46,10 @@ export class ResultsService {
                 })
             }))
             .pipe(catchError(err => {
+                if (this.results()[index] != snapshot) {
+                    // something changed the suggestion, such as a reset. abort
+                    return EMPTY;
+                }
                 this.results.update(results => {
                     results[index].error = err
                     results[index].isLoading = false;
@@ -53,6 +63,7 @@ export class ResultsService {
 
     public reset(): void {
         this.results.set([]);
+        this.latestError.set(undefined);
     }
 
     public getLatestError(): Signal<Error | undefined> {
@@ -64,11 +75,10 @@ export class ResultsService {
     }
 
     public getSuggestionByIndex(index: Signal<number | undefined>): Loading<Suggestion> {
-        const vindex = index();
         return loading(            
-            computed(() => vindex ? this.results()[vindex].value : undefined),
-            computed(() => vindex ? this.results()[vindex].error : undefined),
-            computed(() => vindex ? this.results()[vindex].isLoading : true)
+            computed(() => { const vIndex = index(); return vIndex != undefined ? this.results()[vIndex].value : undefined }),
+            computed(() => { const vIndex = index(); return vIndex != undefined ? this.results()[vIndex].error : undefined }),
+            computed(() => { const vIndex = index(); return vIndex != undefined ? this.results()[vIndex].isLoading : true }),
         );
     }
 

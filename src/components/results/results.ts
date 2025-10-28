@@ -1,4 +1,4 @@
-import { Component, effect, input, signal, Signal } from '@angular/core';
+import { Component, computed, effect, input, signal, Signal } from '@angular/core';
 import { ResultsService } from './results.service';
 import { Suggestion } from '../../core/Suggestion';
 import { ResultCard } from "./result-card/result-card";
@@ -18,7 +18,7 @@ export class Results {
     input: new FormControl<string | null>(null)
   })
   protected resultAmount: Signal<number>;
-  protected latestError: Signal<Error | undefined>;;
+  protected latestError: Signal<Error | undefined>;
 
   constructor(private resultsService: ResultsService) {
 
@@ -26,11 +26,15 @@ export class Results {
     this.latestError = this.resultsService.getLatestError();
   }
 
+  protected readonly indices = computed(() =>
+    Array.from({ length: this.resultAmount() }, (_, i) => i)
+  );
+
   onSubmit() {
     this.resultsService.reset();
     const val = this.form.get('input')?.value?.trim();
     if (val && val > '') {
-      this.resultsService.suggestNew(val, 9);
+      this.resultsService.suggestNew(val, 6);
     }
     this.form.reset();
   }
