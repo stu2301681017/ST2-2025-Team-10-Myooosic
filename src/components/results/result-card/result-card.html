@@ -13,6 +13,9 @@
         <a [href]="result.value()?.song?.url"></a>
         <p>{{result.value()?.reason}}</p>
     }
+    @if (result.hasEmptyValue()) {
+        <span>Nothing found...</span>
+    }
     @if (result.isLoading()) {
         <span>Loading...</span>
     }
