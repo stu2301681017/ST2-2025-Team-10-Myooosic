@@ -17,7 +17,7 @@ export type ApiErrorHandler = {[key: number]: (response: string) => Error};
 
 const defaultErrorHandler: ApiErrorHandler = {
     500: (response: string) => new Error("The server responded with an error. ("+response+")"),
-    501: (response: string) => new Error("The server is currently unresponsive. Try again later. ("+response+")"),
+    503: (response: string) => new Error("The server is currently unresponsive. Try again later. ("+response+")"),
     400: (response: string) => new Error("The client has sent a bad request. ("+response+")"),
     403: (response: string) => new Error("You do not have permission."),
     404: (response: string) => new Error("The requested resource has not been found."),

@@ -36,7 +36,6 @@ export class Results {
     if (val && val > '') {
       this.resultsService.suggestNew(val, 6);
     }
-    this.form.reset();
   }
 
 }

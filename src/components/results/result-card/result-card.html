@@ -10,7 +10,7 @@
             }
         </ul>
         <audio controls [src]="result.value()?.song?.previewUrl"></audio>
-        <a [href]="result.value()?.song?.url"></a>
+        <a href="{{result.value()?.song?.url}}">Full version</a>
         <p>{{result.value()?.reason}}</p>
     }
     @if (result.hasEmptyValue()) {
