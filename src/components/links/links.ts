@@ -3,6 +3,7 @@ import { Component, computed, Signal, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, take, tap } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { ResultsService } from '../results/results.service';
 
 @Component({
   selector: 'app-links',

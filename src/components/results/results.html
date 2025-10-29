@@ -20,5 +20,11 @@
         @if (latestError()) {
             <p>{{latestError()?.message}}</p>
         }
+        @if (canLoad()) {
+            <a class="load" routerLink="saved">Load saved queries</a>
+        }
+        @if (canSave()) {
+            <a class="smallLoad" href="#" (click)="save($event)">Save this query</a>
+        }
     </div>
 </div>

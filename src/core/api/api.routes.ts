@@ -6,4 +6,8 @@ export enum ApiRoute {
     LOGOFF = "/logoff",
     WHOAMI = "/whoami",
     REGISTER = "/register",
+
+    PERSISTENCE = "/query/save"
+
+
 }

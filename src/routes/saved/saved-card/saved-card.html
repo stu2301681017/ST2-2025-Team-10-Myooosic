@@ -1,0 +1,26 @@
+<div class="card">
+
+    <a href="{{result()?.song?.url}}">
+        <img [src]="result()?.song?.picture">
+    </a>
+
+    <div class="content">
+        <h3 class="overlay">{{result()?.song?.name}}</h3>
+        <p class="author overlay">{{result()?.song?.author}}</p>
+        
+        <span class="duration overlay">
+        @if (length().hours > 0) {
+            {{length().hours}}:{{length().minutes.toString().padStart(2, '0')}}:{{length().seconds.toString().padStart(2, '0')}}
+        } @else {
+            {{length().minutes}}:{{length().seconds.toString().padStart(2, '0')}}
+        }
+        </span>
+        
+        <div class="controls overlay">
+            <audio #audioPlayer (play)="playAudio(audioPlayer)" controls [src]="result()?.song?.previewUrl"></audio>
+        </div>
+    </div>
+    
+    <p class="reason">{{result()?.reason}}</p>
+    
+</div>

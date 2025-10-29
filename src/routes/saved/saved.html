@@ -1,0 +1,19 @@
+
+<div class="sizing">
+    <div class="content">
+        @for (save of saves(); track save.prompt.query) {
+
+            <h2>{{save.prompt.query}}</h2>
+
+            @for (suggestion of save.suggestions; track suggestion.song.name) {
+                <app-saved-card [result]="suggestion"></app-saved-card>
+            }
+
+        }
+
+        @if (saves().length == 0) {
+            <div>You do not have saved queries.</div>
+        }
+    </div>
+</div>
+<app-links></app-links>
