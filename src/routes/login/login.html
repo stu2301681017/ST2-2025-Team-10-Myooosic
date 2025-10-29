@@ -1,22 +1,20 @@
 <div class="sizing">
     <p>Login</p>
+    <p class="red">{{error()?.message}}</p>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
             @if (form.get('name')?.hasError('required')) {<mat-error>This field is required.</mat-error>}
-            @else if (form.get('name')?.hasError('pattern')) {<mat-error>Only letters, numbers, @, and . are allowed.</mat-error>}
-            @else if (form.get('name')?.hasError('minlength')) {<mat-error>Minimum length is 4 characters.</mat-error>}
             @else if (form.get('name')?.hasError('maxlength')) {<mat-error>Maximum length is 32 characters.</mat-error>}
             <input matInput formControlName="name">
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
             @if (form.get('pass')?.hasError('required')) {<mat-error>This field is required.</mat-error>}
-            @else if (form.get('pass')?.hasError('pattern')) {<mat-error>No whitespace allowed.</mat-error>}
-            @else if (form.get('pass')?.hasError('minlength')) {<mat-error>Minimum length is 8 characters.</mat-error>}
             @else if (form.get('pass')?.hasError('maxlength')) {<mat-error>Maximum length is 64 characters.</mat-error>}
             <input matInput formControlName="pass" type=password>
         </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Login</button>
     </form>
 </div>
 <app-links></app-links>

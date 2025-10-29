@@ -1,9 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Links } from '../../components/links/links';
+import { ApiService } from '../../core/api/api.service';
+import { ApiRoute } from '../../core/api/api.routes';
+import { Auth } from '../../core/auth';
+import { catchError, EMPTY, tap } from 'rxjs';
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
@@ -13,26 +17,34 @@ import { Links } from '../../components/links/links';
 export class Login {
 
   protected form: FormGroup;
+  protected error = signal<Error | undefined | null>(undefined);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private apiService: ApiService) {
     this.form = this.fb.group({
       name: ['', [
-        Validators.minLength(4),
         Validators.maxLength(32),
-        Validators.pattern(/^[a-zA-Z0-9@.]+$/),
         Validators.required
       ]],
       pass: ['', [
-        Validators.minLength(8),
         Validators.maxLength(64),
-        Validators.pattern(/^\S+$/),
         Validators.required
       ]],
     });
   }
 
   protected onSubmit() {
-
+    this.apiService.post<Auth.LoginRequest>(
+      ApiRoute.LOGIN,
+      { name: this.form.get('name')?.value, password: this.form.get('pass')?.value},
+      {},
+      ({
+        400: (err) => new Error("Invalid request: "+err),
+        401: (err) => new Error("Wrong name/password")
+      })
+    )
+    .pipe(catchError(err => {this.error.set(err); return EMPTY}))
+    .pipe(tap(x => this.error.set(null)))
+    .subscribe();
   }
 
 }

@@ -1,5 +1,6 @@
 <div class="sizing">
     <p>Register</p>
+    <p class="red">{{error()?.message}}</p>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
