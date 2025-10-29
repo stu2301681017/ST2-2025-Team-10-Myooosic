@@ -25,7 +25,8 @@ export class Links {
     this.loggedIn = this.authService.isLoggedIn();
   }
 
-  protected logOff(): void {
+  protected logOff(event: Event): void {
+    event.preventDefault();
     this.authService.logoff().subscribe();
   }
 

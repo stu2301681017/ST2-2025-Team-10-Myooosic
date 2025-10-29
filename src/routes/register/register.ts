@@ -10,6 +10,7 @@ import { Auth } from '../../core/auth/auth';
 import { ApiRoute } from '../../core/api/api.routes';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/auth/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
@@ -21,37 +22,37 @@ export class Register {
   protected form: FormGroup;
   protected error = signal<Error | undefined | null>(undefined);
 
-  constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       name: ['', [
-
+        Validators.minLength(4),
+        Validators.maxLength(32),
+        Validators.pattern(/^[a-zA-Z0-9@.]+$/),
+        Validators.required
       ]],
       pass: ['', [
-
+        Validators.minLength(8),
+        Validators.maxLength(64),
+        Validators.pattern(/^\S+$/),
+        Validators.required
       ]],
       confName: ['', [
-
+        AppValidators.equalTo('name'),
+        Validators.required
       ]],
       confPass: ['', [
-
+        AppValidators.equalTo('pass'),
+        Validators.required
       ]],
     });
   }
 
   protected onSubmit() {
-    this.apiService.post<Auth.RegisterRequest>(
-      ApiRoute.REGISTER,
-      { name: this.form.get('name')?.value, password: this.form.get('pass')?.value},
-      {},
-      ({
-        400: (err) => new Error("Invalid request: "+err),
-        409: (err) => new Error("Username already taken")
-      })
-    )
-    .pipe(tap(x => this.error.set(null)))
-    .pipe(tap(x => this.router.navigateByUrl("login")))
-    .pipe(catchError(err => {this.error.set(err); return EMPTY}))
-    .subscribe();
+    this.authService.register({name: this.form.get('name')?.value, password: this.form.get('pass')?.value})
+      .pipe(tap(x => this.error.set(null)))
+      .pipe(tap(x => this.router.navigateByUrl("login")))
+      .pipe(catchError(err => {this.error.set(err); return EMPTY}))
+      .subscribe();
   }
   
 }

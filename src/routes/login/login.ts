@@ -4,11 +4,9 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Links } from '../../components/links/links';
-import { ApiService } from '../../core/api/api.service';
-import { ApiRoute } from '../../core/api/api.routes';
-import { Auth } from '../../core/auth/auth';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/auth/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
@@ -20,7 +18,7 @@ export class Login {
   protected form: FormGroup;
   protected error = signal<Error | undefined | null>(undefined);
 
-  constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       name: ['', [
         Validators.maxLength(32),
@@ -34,19 +32,11 @@ export class Login {
   }
 
   protected onSubmit() {
-    this.apiService.post<Auth.LoginRequest>(
-      ApiRoute.LOGIN,
-      { name: this.form.get('name')?.value, password: this.form.get('pass')?.value},
-      {},
-      ({
-        400: (err) => new Error("Invalid request: "+err),
-        401: (err) => new Error("Wrong name/password")
-      })
-    )
-    .pipe(tap(x => this.error.set(null)))
-    .pipe(tap(x => this.router.navigateByUrl("")))
-    .pipe(catchError(err => {this.error.set(err); return EMPTY}))
-    .subscribe();
+    this.authService.login({name: this.form.get('name')?.value, password: this.form.get('pass')?.value})
+      .pipe(tap(x => this.error.set(null)))
+      .pipe(tap(x => this.router.navigateByUrl("")))
+      .pipe(catchError(err => {this.error.set(err); return EMPTY}))
+      .subscribe();
   }
 
 }
