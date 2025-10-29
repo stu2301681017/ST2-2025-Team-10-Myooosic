@@ -1,13 +1,13 @@
 import { Component, computed, effect, input, signal, Signal } from '@angular/core';
 import { ResultsService } from './results.service';
-import { Suggestion } from '../../core/Suggestion';
 import { ResultCard } from "./result-card/result-card";
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Loading } from '../../core/loading';
+import { FormGroup, FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-results',
-  imports: [ResultCard, ReactiveFormsModule],
+  imports: [ResultCard, ReactiveFormsModule, MatInputModule, MatFormFieldModule, FormsModule],
   templateUrl: './results.html',
   styleUrl: './results.scss',
   providers: [ResultsService]

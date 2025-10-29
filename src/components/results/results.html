@@ -4,7 +4,9 @@
             <div class="form">
                 <p>What do you wish to listen to?</p>
                 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                    <input formControlName="input" maxlength="256">
+                    <mat-form-field appearance="outline">
+                        <input matInput formControlName="input" maxlength="256">
+                    </mat-form-field>
                 </form>
             </div>
         </div>
