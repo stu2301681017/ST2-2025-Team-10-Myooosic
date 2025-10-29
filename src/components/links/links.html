@@ -1,11 +1,15 @@
 <div class="sizing">
     <nav class="content">
-        @if (route() == '') {
+        @if (route() == '' && !loggedIn()) {
             <a routerLink="login">Login</a>
             <a routerLink="register">Register</a>
         }
         @if (route() == 'register' || route() == 'login') {
             <a routerLink="">Home</a>
+        }
+
+        @if (loggedIn()) {
+            <a (click)="logOff()">Log off</a>
         }
     </nav>
 </div>

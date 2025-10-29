@@ -10,4 +10,6 @@ export namespace Auth {
         password: string
     }
 
+    export type UserId = string;
+
 }

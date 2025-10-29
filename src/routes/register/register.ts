@@ -6,9 +6,10 @@ import { MatInputModule } from '@angular/material/input';
 import { AppValidators } from '../../core/validators';
 import { Links } from '../../components/links/links';
 import { ApiService } from '../../core/api/api.service';
-import { Auth } from '../../core/auth';
+import { Auth } from '../../core/auth/auth';
 import { ApiRoute } from '../../core/api/api.routes';
 import { catchError, EMPTY, tap } from 'rxjs';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
@@ -20,7 +21,7 @@ export class Register {
   protected form: FormGroup;
   protected error = signal<Error | undefined | null>(undefined);
 
-  constructor(private fb: FormBuilder, private apiService: ApiService) {
+  constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.form = this.fb.group({
       name: ['', [
 
@@ -47,8 +48,9 @@ export class Register {
         409: (err) => new Error("Username already taken")
       })
     )
-    .pipe(catchError(err => {this.error.set(err); return EMPTY}))
     .pipe(tap(x => this.error.set(null)))
+    .pipe(tap(x => this.router.navigateByUrl("login")))
+    .pipe(catchError(err => {this.error.set(err); return EMPTY}))
     .subscribe();
   }
   

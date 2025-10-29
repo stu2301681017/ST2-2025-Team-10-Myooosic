@@ -4,5 +4,6 @@ export enum ApiRoute {
 
     LOGIN = "/login",
     LOGOFF = "/logoff",
+    WHOAMI = "/whoami",
     REGISTER = "/register",
 }
