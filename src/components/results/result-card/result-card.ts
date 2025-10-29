@@ -1,7 +1,8 @@
-import { Component, computed, input, Signal } from '@angular/core';
+import { Component, computed, input, Signal, viewChild } from '@angular/core';
 import { Suggestion } from '../../../core/Suggestion';
 import { ResultsService } from '../results.service';
 import { Loading } from '../../../core/loading';
+import { AudioService } from '../../../core/audio.service';
 
 @Component({
   selector: 'app-result-card',
@@ -22,8 +23,12 @@ export class ResultCard {
     return { seconds, minutes, hours};
   })
   
-  constructor(private resultsService: ResultsService) {
+  constructor(private resultsService: ResultsService, private audioService: AudioService) {
     this.result = this.resultsService.getSuggestionByIndex(this.resultIndex);
+  }
+
+  protected playAudio(audioElement: HTMLAudioElement) {
+    this.audioService.playAudio(audioElement);
   }
 
 }

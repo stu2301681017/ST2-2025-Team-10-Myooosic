@@ -1,12 +1,22 @@
-<p>Tell me how you feel.</p>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <input formControlName="input" maxlength="256">
-</form>
+<div class="sizing">
+    <div class="content">
+        <div class="form-container">
+            <div class="form">
+                <p>What do you wish to listen to?</p>
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <input formControlName="input" maxlength="256">
+                </form>
+            </div>
+        </div>
 
-@for (resultIndex of indices(); track resultIndex) {
-    <app-result-card [resultIndex]="resultIndex"></app-result-card>
-}
+        <div class="results">
+        @for (resultIndex of indices(); track resultIndex) {
+            <app-result-card [resultIndex]="resultIndex"></app-result-card>
+        }
+        </div>
 
-@if (latestError()) {
-    <p>{{latestError()}}</p>
-}
+        @if (latestError()) {
+            <p>{{latestError()}}</p>
+        }
+    </div>
+</div>

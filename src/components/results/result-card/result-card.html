@@ -1,18 +1,32 @@
-<div>
+<div class="card">
+
     @if (result.hasValue()) {
-        <ul>
-            <li>{{result.value()?.song?.name}}</li>
-            <li>{{result.value()?.song?.author}}</li>
+
+        <a href="{{result.value()?.song?.url}}">
+            <img [src]="result.value()?.song?.picture">
+        </a>
+
+        <div class="content">
+            <h3 class="overlay">{{result.value()?.song?.name}}</h3>
+            <p class="author overlay">{{result.value()?.song?.author}}</p>
+            
+            <span class="duration overlay">
             @if (length().hours > 0) {
-                <li> {{length().hours}}:{{length().minutes}}:{{length().seconds}}</li>
+                {{length().hours}}:{{length().minutes.toString().padStart(2, '0')}}:{{length().seconds.toString().padStart(2, '0')}}
             } @else {
-                <li>{{length().minutes}}:{{length().seconds}}</li>
+                {{length().minutes}}:{{length().seconds.toString().padStart(2, '0')}}
             }
-        </ul>
-        <audio controls [src]="result.value()?.song?.previewUrl"></audio>
-        <a href="{{result.value()?.song?.url}}">Full version</a>
-        <p>{{result.value()?.reason}}</p>
+            </span>
+            
+            <div class="controls overlay">
+                <audio #audioPlayer (play)="playAudio(audioPlayer)" controls [src]="result.value()?.song?.previewUrl"></audio>
+            </div>
+        </div>
+        
+        <p class="reason">{{result.value()?.reason}}</p>
+
     }
+
     @if (result.hasEmptyValue()) {
         <span>Nothing found...</span>
     }
@@ -22,5 +36,5 @@
     @if (result.hasError()) {
         <span>Whoops!</span>
     }
-
+    
 </div>

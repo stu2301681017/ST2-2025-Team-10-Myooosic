@@ -1,0 +1,40 @@
+.results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 4em;
+    grid-gap: 2em;
+}
+
+.content {
+    text-align: center;
+    margin: auto;
+}
+
+.sizing {
+    height: 80vh;
+    display: flex;
+}
+
+.form-container {
+    height: 25vh;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    justify-self: center;
+}
+
+.form {
+    
+}
+
+@media(max-width: 1200px) {
+    .results {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 800px) {
+    .results {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
