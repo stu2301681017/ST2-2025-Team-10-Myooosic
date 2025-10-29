@@ -10,8 +10,8 @@
 }
 
 .sizing {
-    height: 80vh;
     display: flex;
+    min-height: 80vh;
 }
 
 .form-container {
@@ -25,6 +25,7 @@
 .form {
     
 }
+
 
 @media(max-width: 1200px) {
     .results {

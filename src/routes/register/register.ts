@@ -11,11 +11,13 @@ import { ApiRoute } from '../../core/api/api.routes';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
+import { MatButtonModule } from '@angular/material/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
   styleUrl: './register.scss',
-  imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, CommonModule, Links]
+  imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, CommonModule, Links, MatButtonModule]
 })
 export class Register {
 
@@ -23,6 +25,7 @@ export class Register {
   protected error = signal<Error | undefined | null>(undefined);
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+    
     this.form = this.fb.group({
       name: ['', [
         Validators.minLength(4),
@@ -45,6 +48,7 @@ export class Register {
         Validators.required
       ]],
     });
+
   }
 
   protected onSubmit() {

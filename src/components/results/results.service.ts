@@ -32,6 +32,9 @@ export class ResultsService {
     }
 
     public reSuggest(prompt: string, index: number): void {
+
+        this.results.update(x => { x[index] = loadingSource(); return x});
+
         let snapshot = this.results()[index];
         this.api.get<Suggestion>(ApiRoute.SUGGESTION_SINGLE, {prompt})
             .pipe(tap(suggestion => {

@@ -1,6 +1,10 @@
 .content {
   display: flex;
   justify-content: space-evenly;
+  background: #ffffff;
+  z-index: 99;
+  margin-top: 6em;
+  padding-bottom: 4em;
 }
 
 .sizing {

@@ -4,8 +4,40 @@
   height: 200px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.4), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4), transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: 
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.4s ease,
+    opacity 0.3s ease;
+  will-change: transform, box-shadow, background;
+
+  // --- interactive lighting overlay ---
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(63, 81, 181, 0.15),
+      transparent 60%
+    );
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
 }
 
 .card img {
@@ -95,4 +127,20 @@ a {
   display: block;
   position: absolute;
   z-index: 99;
+}
+
+.reloadButton {
+  margin-left: auto;
+  position: relative;
+  top: -20%;
+  right: -8%;
+  font-size: 2em;
+  width: 1em;
+  height: 1em;
+  color: white;
+}
+
+.spinner {
+  margin: auto;
+  margin-top: 25%;
 }

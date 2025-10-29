@@ -3,10 +3,14 @@ import { Suggestion } from '../../../core/Suggestion';
 import { ResultsService } from '../results.service';
 import { Loading } from '../../../core/loading';
 import { AudioService } from '../../../core/audio.service';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button'
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
+
 
 @Component({
   selector: 'app-result-card',
-  imports: [],
+  imports: [MatIconModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './result-card.html',
   styleUrl: './result-card.scss'
 })
@@ -29,6 +33,13 @@ export class ResultCard {
 
   protected playAudio(audioElement: HTMLAudioElement) {
     this.audioService.playAudio(audioElement);
+  }
+
+  protected reload() {
+    const prompt = this.result.value()?.prompt;
+    const index = this.resultIndex();
+    if (!prompt || index == null) { return; }
+    this.resultsService.reSuggest(prompt, index);
   }
 
 }

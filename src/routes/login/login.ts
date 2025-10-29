@@ -7,11 +7,12 @@ import { Links } from '../../components/links/links';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrl: './login.scss',
-  imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, CommonModule, Links]
+  imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, CommonModule, Links, MatButtonModule]
 })
 export class Login {
 
