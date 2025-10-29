@@ -1,0 +1,11 @@
+<div class="sizing">
+    <nav class="content">
+        @if (route() == '') {
+            <a routerLink="login">Login</a>
+            <a routerLink="register">Register</a>
+        }
+        @if (route() == 'register' || route() == 'login') {
+            <a routerLink="">Home</a>
+        }
+    </nav>
+</div>
